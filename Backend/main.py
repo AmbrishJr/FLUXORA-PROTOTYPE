@@ -44,7 +44,11 @@ app.add_middleware(
 app.include_router(api_router)
 
 
-# Note:
+# Health check endpoint for uptime monitoring (accepts HEAD & GET)
+@app.get("/health")
+@app.head("/health")
+def health_check():
+    return {"status": "ok"}
 # Run the server from the backend directory with:
 #   uvicorn main:app --reload
 
