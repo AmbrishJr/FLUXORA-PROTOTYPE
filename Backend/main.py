@@ -19,10 +19,12 @@ from routes import router as api_router
 app = FastAPI(title="Fluxora API")
 
 
-# Allow local frontend apps to talk to this API during development
+# Allow local frontend apps and production Vercel apps to talk to this API
 origins = [
     "http://localhost:5173",
     "http://localhost:3000",
+    "https://*.vercel.app",  # Allow all Vercel deployments
+    "https://vercel.app",    # Allow root vercel domain
 ]
 
 app.add_middleware(
