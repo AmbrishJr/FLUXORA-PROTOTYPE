@@ -1,12 +1,13 @@
 import axios from "axios";
 
 // Simple axios client pointing to the Fluxora backend.
-// Adjust BASE_URL if your backend runs on a different host/port.
-export const BASE_URL = "http://localhost:8000";
+// Automatically switches between development and production URLs.
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const client = axios.create({
   baseURL: BASE_URL
 });
 
 export default client;
+export { BASE_URL };
 
