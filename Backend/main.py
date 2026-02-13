@@ -27,6 +27,8 @@ origins = [
     "https://vercel.app",    # Allow root vercel domain
     "https://fluxora-prototype.onrender.com",  # Production Render frontend
     "https://fluxora-prototype-u6vu4l3rc-ambrishsaids2023-5783s-projects.vercel.app",  # Vercel deployment
+    "https://fluxora-prototype-git-master-ambrishsaids2023-5783s-projects.vercel.app",  # Git branch deployment
+    "https://fluxora-prototype.vercel.app",  # Production Vercel URL
 ]
 
 app.add_middleware(
