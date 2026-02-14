@@ -14,6 +14,8 @@ function MultipleRoutes({ routes, onSelectRoute, selectedRouteIndex }) {
         return "⚡";
       case "Least Congestion":
         return "🟢";
+      case "Scenic Route":
+        return "🎋";
       case "Shortest Distance":
         return "📏";
       default:
@@ -27,6 +29,8 @@ function MultipleRoutes({ routes, onSelectRoute, selectedRouteIndex }) {
         return "text-blue-400";
       case "Least Congestion":
         return "text-emerald-400";
+      case "Scenic Route":
+        return "text-amber-400";
       case "Shortest Distance":
         return "text-purple-400";
       default:

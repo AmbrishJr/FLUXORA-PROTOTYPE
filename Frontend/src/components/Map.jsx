@@ -97,19 +97,24 @@ function Map({ routeNodes, congestionScore }) {
 
     const fetchRealRoute = async () => {
       try {
-        const startLocation = LOCATIONS[routeNodes[0]];
-        const endLocation = LOCATIONS[routeNodes[routeNodes.length - 1]];
-        
-        if (!startLocation || !endLocation) {
-          console.error('Invalid location nodes');
+        // Build waypoint list using all intermediate nodes so each strategy
+        // (which may include intermediate stops) is routed precisely.
+        const coordsList = routeNodes
+          .map((code) => {
+            const loc = LOCATIONS[code];
+            return loc ? `${loc.coordinates[0]},${loc.coordinates[1]}` : null;
+          })
+          .filter(Boolean);
+
+        if (coordsList.length < 2) {
+          console.error('Invalid or insufficient location nodes for routing');
           return;
         }
 
-        const [lng1, lat1] = startLocation.coordinates;
-        const [lng2, lat2] = endLocation.coordinates;
+        const coordsStr = coordsList.join(";");
 
-        // Build Mapbox Directions API URL
-        const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${lng1},${lat1};${lng2},${lat2}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
+        // Build Mapbox Directions API URL using all waypoints
+        const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordsStr}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
 
         const response = await fetch(directionsUrl);
         const data = await response.json();
@@ -137,7 +142,15 @@ function Map({ routeNodes, congestionScore }) {
           markersRef.current.forEach(marker => marker.remove());
           markersRef.current = [];
 
-          // Add start marker
+          // Add start and end markers (first and last waypoints)
+          const startCode = routeNodes[0];
+          const endCode = routeNodes[routeNodes.length - 1];
+          const startLocation = LOCATIONS[startCode];
+          const endLocation = LOCATIONS[endCode];
+
+          const [lng1, lat1] = startLocation.coordinates;
+          const [lng2, lat2] = endLocation.coordinates;
+
           const startEl = document.createElement("div");
           startEl.className = "h-4 w-4 rounded-full bg-emerald-400 border-2 border-white shadow-lg";
           startEl.title = startLocation.name;
@@ -145,7 +158,6 @@ function Map({ routeNodes, congestionScore }) {
             .setLngLat([lng1, lat1])
             .addTo(mapRef.current);
 
-          // Add end marker
           const endEl = document.createElement("div");
           endEl.className = "h-4 w-4 rounded-full bg-rose-400 border-2 border-white shadow-lg";
           endEl.title = endLocation.name;
