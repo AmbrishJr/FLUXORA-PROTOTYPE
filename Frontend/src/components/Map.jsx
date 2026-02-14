@@ -22,6 +22,7 @@ function Map({ routeNodes, congestionScore }) {
   const markersRef = useRef([]);
   const [persistentRoute, setPersistentRoute] = useState(null);
   const [mapInitialized, setMapInitialized] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
 
   // Initialize map ONCE
   useEffect(() => {
@@ -173,9 +174,17 @@ function Map({ routeNodes, congestionScore }) {
             new mapboxgl.LngLatBounds(coordinates[0], coordinates[0])
           );
           mapRef.current.fitBounds(bounds, { padding: 80, duration: 1000 });
+
+          console.debug('Mapbox directions returned routes:', data.routes?.length, 'duration(s):', data.routes?.[0]?.duration);
+          setFetchError(null);
+        }
+        else {
+          console.warn('Mapbox directions response had no routes', data);
+          setFetchError('No route returned by Mapbox for these waypoints');
         }
       } catch (error) {
         console.error('Error fetching route:', error);
+        setFetchError(String(error?.message || error));
       }
     };
 
@@ -202,7 +211,13 @@ function Map({ routeNodes, congestionScore }) {
   }, [persistentRoute, mapInitialized]);
 
   return (
-    <div className="w-full h-[60vh] md:h-[70vh] rounded-3xl overflow-hidden border border-slate-800 shadow-[0_0_40px_rgba(15,23,42,0.9)] bg-slate-900">
+    <div className="w-full h-[60vh] md:h-[70vh] rounded-3xl overflow-hidden border border-slate-800 shadow-[0_0_40px_rgba(15,23,42,0.9)] bg-slate-900 relative">
+      {fetchError && (
+        <div className="absolute top-4 left-4 z-40 bg-rose-900/90 text-rose-100 px-3 py-2 rounded-md text-xs shadow-md">
+          <strong className="block text-[11px] font-medium">Route error</strong>
+          <span className="block text-[11px]">{fetchError}</span>
+        </div>
+      )}
       <div ref={mapContainerRef} className="w-full h-full min-h-[400px]" />
     </div>
   );
