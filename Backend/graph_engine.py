@@ -72,8 +72,19 @@ def get_emergency_mode() -> bool:
     return emergency_mode
 
 
-def _generate_route_explanation(route: List[str], congestion_score: float) -> str:
+def _generate_route_explanation(route: List[str], congestion_score: float, strategy_name: str = None) -> str:
     """Generate AI explanation for why this route was chosen."""
+    # Special explanation for scenic/slowest routes
+    if strategy_name == "Scenic Route":
+        scenic_explanations = [
+            "Perfect for a leisurely drive with scenic stops",
+            "Enjoy the journey at a relaxed pace through interesting areas",
+            "Take the longer route for a more pleasant experience",
+            "Explore alternative areas with less traffic pressure",
+            "Great for sightseeing and enjoying the ride"
+        ]
+        return random.choice(scenic_explanations)
+    
     explanations = [
         f"Chosen to reduce predicted congestion by {int((2.0 - congestion_score) * 20)}% in the next 20 minutes",
         "Avoids expected crowd surge near the event zone",
@@ -138,6 +149,23 @@ def get_multiple_routes(source: str, destination: str, max_routes: int = 3) -> L
     except (nx.NetworkXNoPath, nx.NodeNotFound):
         pass
     
+    # Strategy 4: Slowest route (maximize travel time - scenic/leisure route)
+    def slowest_weight(u: str, v: str, data: Dict) -> float:
+        """Weight that maximizes travel time for scenic/leisurely routes."""
+        base_time = data.get("base_time", 0)
+        congestion_factor = data.get("congestion_factor", 1.0)
+        # Return negative weight so Dijkstra finds the maximum time path
+        return -(base_time * congestion_factor)
+    
+    try:
+        path4 = nx.dijkstra_path(G, source, destination, weight=slowest_weight)
+        route4_data = _calculate_route_metrics(path4, "Scenic Route")
+        # Only add if different from existing routes
+        if len(routes) == 0 or (path4 != routes[0]["route"] and path4 != routes[1]["route"] if len(routes) > 1 else True):
+            routes.append(route4_data)
+    except (nx.NetworkXNoPath, nx.NodeNotFound):
+        pass
+    
     # If no routes found, return error
     if not routes:
         return [{"error": "No routes found"}]
@@ -164,7 +192,7 @@ def _calculate_route_metrics(path: List[str], strategy_name: str) -> Dict[str, U
         "route": path,
         "total_time": round(total_time, 2),
         "congestion_score": round(average_congestion, 2),
-        "explanation": _generate_route_explanation(path, average_congestion),
+        "explanation": _generate_route_explanation(path, average_congestion, strategy_name),
         "confidence": _get_confidence_level(average_congestion),
         "strategy": strategy_name
     }
