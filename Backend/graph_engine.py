@@ -29,13 +29,21 @@ G.add_nodes_from(NODES)
 
 # Add directed edges with base_time (minutes) and congestion_factor
 # Chennai road network with realistic travel times
+# All routes are bidirectional for user flexibility
 EDGES = [
-    ("A", "B", {"base_time": 12, "congestion_factor": 1.24}),  # Anna Nagar → T Nagar
-    ("A", "C", {"base_time": 15, "congestion_factor": 1.73}),  # Anna Nagar → Guindy  
-    ("B", "D", {"base_time": 18, "congestion_factor": 1.94}),  # T Nagar → Velachery
-    ("C", "D", {"base_time": 14, "congestion_factor": 1.50}),  # Guindy → Velachery
-    ("B", "C", {"base_time": 10, "congestion_factor": 1.59}),  # T Nagar → Guindy
-    ("A", "D", {"base_time": 20, "congestion_factor": 1.37}),  # Anna Nagar → Velachery
+    # Forward routes
+    ("A", "B", {"base_time": 12, "congestion_factor": 1.24}),  # Anna Nagar ↔ T Nagar
+    ("B", "A", {"base_time": 12, "congestion_factor": 1.24}),
+    ("A", "C", {"base_time": 15, "congestion_factor": 1.73}),  # Anna Nagar ↔ Guindy
+    ("C", "A", {"base_time": 15, "congestion_factor": 1.73}),
+    ("B", "D", {"base_time": 18, "congestion_factor": 1.94}),  # T Nagar ↔ Velachery
+    ("D", "B", {"base_time": 18, "congestion_factor": 1.94}),
+    ("C", "D", {"base_time": 14, "congestion_factor": 1.50}),  # Guindy ↔ Velachery
+    ("D", "C", {"base_time": 14, "congestion_factor": 1.50}),
+    ("B", "C", {"base_time": 10, "congestion_factor": 1.59}),  # T Nagar ↔ Guindy
+    ("C", "B", {"base_time": 10, "congestion_factor": 1.59}),
+    ("A", "D", {"base_time": 20, "congestion_factor": 1.37}),  # Anna Nagar ↔ Velachery
+    ("D", "A", {"base_time": 20, "congestion_factor": 1.37}),
 ]
 
 G.add_edges_from(EDGES)

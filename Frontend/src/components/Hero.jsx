@@ -52,8 +52,8 @@ function Hero({ onGetStarted }) {
               transition={{ duration: 0.6, delay: 0.15 }}
             >
               A map-first experience that finds optimal routes, visualizes
-              congestion live, and rewards low-impact travel. Built to impress
-              hackathon judges in a single glance.
+              congestion live, and rewards low-impact travel. Reimagining how
+              commuters navigate cities smarter.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}

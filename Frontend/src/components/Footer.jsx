@@ -7,7 +7,7 @@ function Footer() {
             Fluxora – Smart Mobility prototype.
           </p>
           <p>
-            Built for hackathons with FastAPI, React, TailwindCSS, and Mapbox.
+            Powered by FastAPI, React, TailwindCSS, and Mapbox.
           </p>
         </div>
         <div className="flex flex-col items-center md:items-end gap-1">
