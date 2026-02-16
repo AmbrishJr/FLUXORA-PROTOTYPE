@@ -57,4 +57,3 @@ The backend is configured to accept requests from:
 - Prototype only – data is stored in memory and reset on restart.
 - No authentication, no external APIs, and no real database.
 - Free tier Render instances spin down with inactivity (UptimeRobot monitoring mitigates this).
-
